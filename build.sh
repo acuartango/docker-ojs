@@ -192,7 +192,7 @@ for ojs in "${ojsVersions[@]}"; do
 				esac
 
 				if [ ${build} -eq 1 ]; then
-
+				
 					if [[ -d "templates/webServers/$server/$php" ]]; then
 						# Build the folder structure:
 						mkdir -p "versions/$ojsNum/$os/$server/$php/root"
@@ -201,8 +201,9 @@ for ojs in "${ojsVersions[@]}"; do
 						cp "templates/common/env" "versions/$ojsNum/$os/$server/$php/.env"
 						cp "templates/exclude.list" "versions/$ojsNum/$os/$server/$php/exclude.list"
 
-						# Create persistent folders (with right permissions):
+						# Create persistent folders (with right permissions) and copy config templates:
 						mkdir -p "versions/$ojsNum/$os/$server/$php/volumes/config"
+						cp -a "templates/volumes/config" "versions/$ojsNum/$os/$server/$php/volumes"
 						echo "Folder to keep persistent your CONFIG files \
 							  (uncomment the volume files in docker-compose.yml)" \
 							  > "versions/$ojsNum/$os/$server/$php/volumes/config/README"
@@ -222,7 +223,7 @@ for ojs in "${ojsVersions[@]}"; do
 							  (uncomment the volume docker-compose.yml)" \
 							  > "versions/$ojsNum/$os/$server/$php/volumes/logs/app/README"
 
-						chown 100:101 "versions/$ojsNum/$os/$server/$php/volumes" -Rf
+						chown 100:101 "versions/$ojsNum/$os/$server/$php/volumes" -Rf || echo You have no rights to change the owner of your files. Use \"sudo build.sh\" instead
 
 						mkdir -p "versions/$ojsNum/$os/$server/$php/volumes/db"
 						echo "Folder to keep persistent your DB files \
@@ -235,7 +236,7 @@ for ojs in "${ojsVersions[@]}"; do
 							  > "versions/$ojsNum/$os/$server/$php/volumes/logs/db/README"
 
 						chown 999:999 "versions/$ojsNum/$os/$server/$php/volumes/logs/db" \
-						              "versions/$ojsNum/$os/$server/$php/volumes/db" -Rf
+						              "versions/$ojsNum/$os/$server/$php/volumes/db" -Rf || echo You have no rights to change permissions of another users\'s files. Use \"sudo build.sh\" instead
 
 						# Here we can uncomment the volumes in docker-compose
 						# but probably is better keeping different docker-composes
